@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" >
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</f:facet>
+	<ui:insert name="titulo"></ui:insert>
+</h:head>
+<h:body style="background-image: url('/Acisum/resources/img/violao.jpg'); background-size:100%; min-heigth:500px;">
+
+	<p:growl id="mensagem" showDetail="false"/>
+
+	<div class="cardMenu">
+		<div class="imagem">
+			<img src="../resources/img/acisum540.png" style="width: 15%; margin-top: 10px"></img>
+		</div>
+	</div>
+	
+	<h:form id="frmMenu">
+		<div>
+			<p:outputPanel style="float: left;">
+				<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao}">
+					<p:commandButton style="margin-left: 10px" oncomplete="PF('menu').show()" icon="fa fa-th-list"/>
+				</h:panelGroup>
+			</p:outputPanel>
+			
+			<p:outputPanel style="float: right;">
+				<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao}">
+		    		<p:commandButton id="sair" icon="fa fa-sign-out" value="Sair" update=":frmMenu :mensagem" actionListener="#{MBLogin.logout}" style="margin-right: 10px"/>
+	    		</h:panelGroup>
+	    	</p:outputPanel>
+	    </div>
+	</h:form>
+
+	<h:form>
+	
+		<p:sidebar widgetVar="menu">
+			<nav class="aw-menu">
+				<ul>
+<!-- 					<li> -->
+<!-- 						<h:link><i class="fa  fa-fw  fa-home"></i>Home</h:link> -->
+<!-- 					</li> -->
+					<li>
+						<h:link outcome="cifras.xhtml"><i class="fa fa-file-audio-o"></i>Cifras</h:link>
+					</li>
+					<li>
+						<h:link outcome="minhas_playlist.xhtml"><i class="fa  fa-list-ol"></i>Minhas PlayList</h:link>
+					</li>
+					<li>
+						<h:link outcome="playlist.xhtml"><i class="fa  fa fa-plus"></i>Nova PlayList</h:link>
+					</li>
+					<li>
+						<h:link outcome="perfil.xhml"><i class="fa fa-fw fa-user"></i>Editar Senha</h:link>
+					</li>
+				</ul>
+			</nav>
+		</p:sidebar>
+	
+
+	</h:form>
+
+	<ui:insert name="conteudo"></ui:insert>
+	
+	<p:dialog width="420" height="500" header="Login" widgetVar="dlgEditar" modal="true" resizable="false">
+		<h:form id="formEditar">
+			
+		</h:form>
+	</p:dialog>
+
+	<p:ajaxStatus onstart="PF('statusDialogLogin').show();"
+		onsuccess="PF('statusDialogLogin').hide();" />
+
+	<p:dialog id="dlgAjaxStatusLogin" modal="true"
+		widgetVar="statusDialogLogin" header="Aguarde..." draggable="false"
+		closable="false" resizable="false" width="280">
+		<h:panelGrid style="margin: auto; text-align: center">
+			<p:outputLabel value="" />
+			<h:graphicImage name="disk-loading.gif" library="img"
+				style="margin: 0em auto; width:100%" />
+		</h:panelGrid>
+	</p:dialog>
+
+	<h:outputStylesheet name="style.css" library="css" />
+	<h:outputStylesheet name="primeicons.css" library="css" />
+	<h:outputScript name="scripts.js" library="js" />
+	
+</h:body>
+</html>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" >
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+		</f:facet>
+		<title>Acisum - Home</title>
+	</h:head>
+
+	<h:body style="background-image: url('/Acisum/resources/img/violao.jpg'); background-size:100%; min-heigth:500px;">
+		<div class="cardMenu">
+			<div class="imagem">
+				<img src="../resources/img/acisum540.png" style="width: 15%; margin-top: 10px"></img>
+			</div>
+		</div>
+		
+		<h:form id="frmMenu">
+			<div>
+				<p:outputPanel style="float: left;">
+					<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao}">
+						<p:commandButton style="margin-left: 10px" oncomplete="PF('menu').show()" icon="fa fa-th-list"/>
+					</h:panelGroup>
+				</p:outputPanel>
+				
+				<p:outputPanel style="float: right;">
+					<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao == 'false'}">
+						<p:commandButton value="Entrar" oncomplete="PF('dlgLogin').show();" icon=" fa fa-sign-in"/>
+			    		<p:commandButton id="cadastrar" update=":formNovo" value="Cadastrar" oncomplete="PF('dlgNovo').show();" 
+			    			actionListener="#{MBLogin.novo}" icon="fa fa-pencil-square-o"/>
+			    	</h:panelGroup>
+			    </p:outputPanel>
+		    </div>
+		</h:form>
+		
+		<p:growl id="mensagem" showDetail="false"/>
+		<h:form id="frmHome">
+			<div align="center">
+				<p:selectOneMenu id="advanced"  converter="omnifaces.SelectItemsConverter" style="width:40%;" panelStyle="width:40%"
+		                         effect="fade" var="c"  filter="true" value="#{MBHome.cantor}">
+		             <f:selectItem itemLabel="Selecione um cantor" noSelectionOption="true"/>
+				     <f:selectItems value="#{MBHome.cantores}" var="cantor" itemValue="#{cantor}" itemLabel="#{cantor.nome}" />
+				     <p:ajax listener="#{MBHome.buscarCifras}" update=":frmHome :mensagem" />
+				     <p:column style="width:10%">
+		               <p:graphicImage id="foto" value="#{imagemBean.foto}" styleClass="user">
+		                	<f:param name="caminho" value="#{c.id}"/>
+		                </p:graphicImage>
+		            </p:column>
+		 
+		            <p:column>
+		                <h:outputText value="#{c.nome}" />
+		            </p:column>
+		        </p:selectOneMenu>
+		    </div>
+			
+			<p:panel style="margin: 1em auto; width: 80%">
+				<p:outputPanel id="pnlDetalhes">
+					<h:panelGroup layout="block">
+<!-- 						<h:graphicImage name="cantor_#{MBHome.cantor.id}.jpg" library="cantor" styleClass="user" /> -->
+						<p:panelGrid id="pgDetalheMobiliario" style="margin: 1em auto; width: 99%;">
+							<f:facet name="header">
+								<p:row>
+									<p:column colspan="3">
+										<h:outputText value="Dados do Cantor" />
+									</p:column>
+								</p:row>
+							</f:facet>
+							<p:row>
+								<p:column>
+									<h:outputText value="Cantor:"
+										style="font-weight: bold;" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{MBHome.cantor.nome}" />
+								</p:column>
+								
+							</p:row>
+							<p:row>
+								<p:column>
+									<h:outputText value="Local do Show:" style="font-weight: bold;" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{MBHome.playlist.nome}" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</h:panelGroup>
+				
+			       	<p:dataTable var="cifra" value="#{MBHome.cifras}" selection="#{MBHome.cifrasSelecionadas}" 
+			       		rowKey="#{cifra.id}" style="margin: 1em auto; width:99%" reflow="true">
+				       
+				        <p:column selectionMode="multiple" style="width:50px;text-align:center"/>
+				        
+				        <p:column headerText="Nome da Musica" filterBy="#{cifra.nome}" filterMatchMode="contains">
+				            <h:outputText value="#{cifra.nome}" />
+				        </p:column>
+				    </p:dataTable>
+					
+					<div align="center">
+						<p:commandButton value="Enviar" actionListener="#{MBHome.indicar}" update=":frmHome :mensagem"/>
+					</div>
+				</p:outputPanel>
+			</p:panel>
+		</h:form>
+
+		<p:dialog width="420" height="500" header="Login" widgetVar="dlgLogin" modal="true" resizable="false">
+			<h:panelGrid style="margin: 0 auto;">
+				<p:graphicImage styleClass="a" name="img/acisum540.png" />
+			</h:panelGrid>
+			<h:form id="formLogin">
+				<h:panelGrid id="painel" cellspacing="10">
+					<h:panelGrid columns="2">
+						<i class="fa fa-fw fa-user"></i>
+						<p:inputText placeholder="E-mail ou usuário" size="30" value="#{MBLogin.usuario.email}" required="true"
+							requiredMessage="Campo Login é obrigatório" />
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<i class="fa fa-fw fa-lock"></i>
+						<p:password placeholder="Senha" maxlength="12" size="30" required="true" requiredMessage="Campo Senha é obrigatório" 
+							value="#{MBLogin.usuario.senha}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="2">
+						<h:graphicImage styleClass="a" name="img/guitarra.png" />
+						<p:commandButton style="bottom:100px;" value="Acessar" update=":frmMenu :mensagem" actionListener="#{MBLogin.logar}" 
+							oncomplete="PF('dlgLogin').hide();" />
+						<div id="guitarra"></div>
+					</h:panelGrid>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog width="500" header="Novo Aqui" widgetVar="dlgNovo" modal="true" resizable="false">
+			
+			<h:form id="formNovo">
+				<div class="ui-fluid">
+					<p:panelGrid id="pgNovo" layout="grid" columns="2"
+							style="width: 100%;" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-5, ui-grid-col-7">
+							
+							<p:outputLabel for="nome" value="Nome: "/>
+							<p:inputText id="nome" value="#{MBLogin.cantor.nome}" required="true" requiredMessage="Nome é obrigatório!"/>
+							<p:outputLabel for="email" value="Email: "/>
+							<p:inputText id="email" value="#{MBLogin.usuario.email}" required="true" requiredMessage="Email é obrigatório!"/>
+							<p:outputLabel for="senha" value="Senha: "/>
+							<p:password id="senha" value="#{MBLogin.usuario.senha}" match="senha2"  feedback="true" required="true" 
+								requiredMessage="Senha é obrigatório!" validatorMessage="Senhas diferentes!"/>
+							<p:outputLabel for="senha2" value="Confirme Senha: "/>
+							<p:password id="senha2" value="#{MBLogin.usuario.senha}" required="true" />
+							<p:outputLabel value=""/>
+							<p:fileUpload id="upload"  fileUploadListener="#{MBLogin.upload}" label="Escolher foto" allowTypes="/(\.|\/)(jpg)$/"  
+								invalidFileMessage="Tipo de arquivo inválido!" update=":mensagem" auto="true" />
+					</p:panelGrid>
+				</div>
+				<div align="center">
+					<p:commandButton value="Salvar" update=":formNovo :mensagem" actionListener="#{MBLogin.salvar}"/>
+				</div>
+			</h:form>
+		</p:dialog>
+
+	<p:ajaxStatus onstart="PF('statusDialogLogin').show();"
+		onsuccess="PF('statusDialogLogin').hide();" />
+
+	<p:dialog id="dlgAjaxStatusLogin" modal="true"
+		widgetVar="statusDialogLogin" header="Aguarde..." draggable="false"
+		closable="false" resizable="false" width="280">
+		<h:panelGrid style="margin: auto; text-align: center">
+			<p:outputLabel value="" />
+			<h:graphicImage name="disk-loading.gif" library="img"
+				style="margin: 0em auto; width:100%" />
+		</h:panelGrid>
+	</p:dialog>
+
+	<h:outputStylesheet name="style.css" library="css" />
+	<h:outputStylesheet name="primeicons.css" library="css" />
+	<h:outputScript name="scripts.js" library="js" />
+	
+</h:body>
+</html>

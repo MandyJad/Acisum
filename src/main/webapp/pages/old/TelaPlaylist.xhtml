@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Playlist</title>
+
+	<h:outputStylesheet library="css" name="playlist.css" />
+
+</h:head>
+<h:body>
+
+	<p:growl id="mensagem" />
+
+	<div id="topo">
+		<h:form>
+			<p:menubar>
+				<f:facet name="options">
+					<h:link outcome="TelaMenu.xhmtl">
+						<p:graphicImage styleClass="a" name="img/acisum540.png"
+							style="margin-left:570px; width:100px;" />
+					</h:link>
+					<p:commandButton value="Sair"
+						actionListener="#{menuBean.deslogar()}" style="margin-left:540px;" />
+				</f:facet>
+			</p:menubar>
+		</h:form>
+	</div>
+	<div id="conteudoEsq">
+		<h:form id="formPlay">
+			<h:panelGrid>
+				<f:facet name="header">
+					<p:selectOneMenu style="float:left;" filter="true"
+						value="#{playlistBean.genero}"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Estilo da música" />
+						<f:selectItems value="#{playlistBean.generos}" var="genero"
+							itemValue="#{genero}" itemLabel="#{genero.nomeGenero}" />
+						<p:ajax listener="#{playlistBean.listarGenero}"
+							update=":formPlay:cifras" />
+					</p:selectOneMenu>
+					<p:commandButton icon="fa fa-fw fa-forward" style="width:150px;"
+						update=":formTabela:dataTable" />
+				</f:facet>
+
+				<p:selectManyMenu id="cifras" value="#{playlistBean.cifras}"
+					converter="omnifaces.SelectItemsConverter" var="cifra"
+					filter="true" filterMatchMode="contains" showCheckbox="true"
+					style="width:325px;">
+					<f:selectItems value="#{playlistBean.cifras}" var="cifra"
+						itemLabel="#{cifra.nomeCifra}" itemValue="#{cifra}" />
+					<p:column>
+						<h:outputText value="#{cifra.nomeCifra}" />
+					</p:column>
+					<p:column>
+						<h:outputText value="#{cifra.genero.nomeGenero}" />
+					</p:column>
+				</p:selectManyMenu>
+
+			</h:panelGrid>
+		</h:form>
+	</div>
+	<div id="colEsq">
+		<div id="sepEsqcolCentral">
+			<div id="colDir">
+				<div id="conteudoDir">
+					<h3>COLUNA DIREITA</h3>
+					Lorem ipsum ...
+				</div>
+				<div id="sepcolCentralDir">
+					<div id="colCentral">
+						<h:form id="formTabela">
+							<p:panel header="Playlist">
+								<p:commandButton icon="fa fa-fw fa-external-link"
+									oncomplete="PF('exibicao').show();" />
+								<p:dataTable id="dataTable"
+									emptyMessage="Nenhuma cifra escolhida."
+									value="#{playlistBean.cifras}" var="cifras" 
+									selectionMode="single" selection="#{playlistBean.cifra}"
+									rowKey="#{cifras.id}" scrollable="true">
+									<p:ajax event="rowDblselect" listener="#{playlistBean.exibicao}" update=":formTabela:dataTable"/>
+									<p:column headerText="Cifra">
+										<h:outputText value="#{cifras.nomeCifra}" />
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+
+							<p:contextMenu for="dataTable">
+								<p:menuitem value="Abrir" icon="pi pi-search" />
+								<p:menuitem value="Deletar" icon="pi pi-times" />
+							</p:contextMenu>
+
+
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<p:dialog width="100%" height="750px" header="Login"
+		widgetVar="exibicao" modal="true" resizable="false">
+
+		<p:media player="pdf" />
+
+
+	</p:dialog>
+
+
+</h:body>
+</html>

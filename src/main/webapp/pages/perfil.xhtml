@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="titulo">
+		<title>Acisum - Cifras</title>
+	</ui:define>
+
+	<ui:define name="conteudo">
+		
+		<h:form id="form">
+			<p:panel style="margin: 1em auto; width: 80%">
+				<div align="center">
+					<p:graphicImage id="foto" value="#{imagemBean.foto}" styleClass="perfil">
+	                	<f:param name="caminho" value="#{MBPerfil.usuario.cantor.id}"/>
+	                </p:graphicImage>
+				</div>
+				<div class="ui-fluid">
+				<p:panelGrid id="pgNovo" layout="grid" columns="2"
+						style="width: 100%;" styleClass="ui-panelgrid-blank form-group"
+						columnClasses="ui-grid-col-2, ui-grid-col-7">
+						
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText id="nome" value="#{MBPerfil.usuario.cantor.nome}" required="true" requiredMessage="Nome é obrigatório!"/>
+						<p:outputLabel for="email" value="Email: "/>
+						<p:inputText id="email" value="#{MBPerfil.usuario.email}" required="true" requiredMessage="Email é obrigatório!"/>
+						<p:outputLabel for="senha" value="Senha: "/>
+						<p:password id="senha" value="#{MBPerfil.senha}" match="senha2"  feedback="true" 
+							requiredMessage="Senha é obrigatório!" validatorMessage="Senhas diferentes!"/>
+						<p:outputLabel for="senha2" value="Confirme Senha: "/>
+						<p:password id="senha2" value="#{MBPerfil.senha}" />
+						<p:outputLabel value=""/>
+						<p:fileUpload id="upload" fileUploadListener="#{MBPerfil.upload}" label="Escolher foto" allowTypes="/(\.|\/)(jpg)$/"  
+							invalidFileMessage="Tipo de arquivo inválido!" update=":mensagem" auto="true" />
+				</p:panelGrid>
+				</div>
+				<div align="center" style="margin: 1em auto">
+					<p:commandButton value="Salvar" update=":form:foto,pgNovo :mensagem" actionListener="#{MBPerfil.salvar}"/>
+				</div>
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

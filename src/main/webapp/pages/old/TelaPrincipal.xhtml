@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Acisum</title>
+
+	<h:outputStylesheet library="css" name="principal.css" />
+
+</h:head>
+<h:body>
+
+	<p:growl id="mensagem" />
+
+	<h:form>
+		<p:menubar>
+			<p:menuitem url="img/acsium540.png" />
+
+			<f:facet name="options">
+				<p:commandButton value="Entre" oncomplete="PF('login').show();"
+					actionListener="#{loginBean.novo()}" update="formLogin:painel" />
+				<p:commandButton value="Cadastre-se" />
+			</f:facet>
+		</p:menubar>
+	</h:form>
+
+	<p:dialog width="420" height="500" header="Login" widgetVar="login"
+		modal="true" resizable="false">
+		<h:panelGrid style="margin: 0 auto;">
+			<p:graphicImage styleClass="a" name="img/acisum540.png" />
+		</h:panelGrid>
+		<h:form id="formLogin">
+			<h:panelGrid id="painel" cellspacing="10">
+				<h:panelGrid columns="2">
+					<i class="fa fa-fw fa-user"></i>
+					<p:inputText placeholder="E-mail ou usuário" size="30"
+						value="#{loginBean.usumail}" required="true"
+						requiredMessage="Campo Login é obrigatório" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<i class="fa fa-fw fa-lock"></i>
+					<p:password placeholder="Senha" maxlength="12" size="30"
+						value="#{loginBean.login.senha}" required="true"
+						requiredMessage="Campo Senha é obrigatório" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+				<h:graphicImage styleClass="a" name="img/guitarra.png" />
+				<p:commandButton style="bottom:100px;" value="Acessar"
+					actionListener="#{loginBean.logar()}" update="mensagem" />
+				<div id="guitarra"></div>
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+
+	<h:form>
+		<p:growl id="messages" />
+		<p:splitButton id="cantores" value="Cantores"
+			action="#{buttonView.save}" update="messages" icon="pi pi-save">
+			<p:menuitem value="Ana Luiza Carvalho" action="#{buttonView.save}"
+				update="messages" icon="pi pi-save" />
+			<p:menuitem value="Giovanni Zuki" action="#{buttonView.update}"
+				update="messages" icon="pi pi-refresh" />
+			<p:menuitem value="Luiz de Pieri" action="#{buttonView.delete}"
+				update="messages" ajax="false" icon="pi pi-times" />
+		</p:splitButton>
+	</h:form>
+
+</h:body>
+</html>

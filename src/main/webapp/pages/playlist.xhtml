@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	
+	<ui:define name="titulo">
+		<title>Acisum - Playlist</title>
+	</ui:define>
+
+	<ui:define name="conteudo">
+
+		<h:form id="frmPlaylist">
+
+			<p:panel style="margin: 1em auto;margin-top:50px; width: 99%">
+				<div class="ui-fluid">
+					<p:panelGrid id="pgLocal" layout="grid" columns="3"
+						style="width: 100%" styleClass="ui-panelgrid-blank form-group"
+						columnClasses="ui-grid-col-2, ui-grid-col-6, ui-grid-col-2">
+						
+						<p:outputLabel value="Escolha o local:"/>
+						
+						<p:selectOneMenu id="estabelecimentos" converter="omnifaces.SelectItemsConverter" value="#{MBPlaylist.playlist}">
+							<f:selectItem itemLabel="Selecione um estabelecimento" noSelectionOption="true" />
+							<f:selectItems value="#{MBPlaylist.playLists}" var="play" itemValue="#{play}" itemLabel="#{play.nome}"/>
+						</p:selectOneMenu>
+						
+						<p:commandButton value="+" oncomplete="PF('dlgNovoEstabelecimento').show();" update=":frmNovo" actionListener="#{MBPlaylist.novaPlaylist}"/>
+					</p:panelGrid>
+				</div>
+			</p:panel>
+
+			<p:panel header="Playlist" style="margin: 0em auto; width: 99%">
+				<div class="ui-fluid">
+					<p:panelGrid id="pgGenero" layout="grid" columns="2"
+						style="width: 100%; margin: 1em auto" styleClass="ui-panelgrid-blank form-group"
+						columnClasses="ui-grid-col-1, ui-grid-col-4">
+						
+						<p:outputLabel value="Gênero:"/>
+						
+						<p:selectOneMenu id="generos" value="#{MBPlaylist.genero}" converter="omnifaces.SelectItemsConverter">
+							<p:ajax listener="#{MBPlaylist.buscarCifrasCantorGenero}" update=":frmPlaylist:pickList :mensagem"/>
+							<f:selectItem itemLabel="Filtrar" itemValue="" />
+							<f:selectItems value="#{MBPlaylist.generos}" var="genero" itemLabel="#{genero.nome}" itemValue="#{genero}" />
+						</p:selectOneMenu>
+					</p:panelGrid>	
+				
+					<p:pickList id="pickList" value="#{MBPlaylist.cifrasModel}" var="cifra"
+						itemLabel="#{cifra.nome}" itemValue="#{cifra}" converter="primeFacesPickListConverter"
+						showSourceControls="true" showTargetControls="true"
+						showCheckbox="true" showSourceFilter="true" showTargetFilter="true"
+						filterMatchMode="contains" responsive="true" >
+					</p:pickList>
+				</div>
+				
+				<div align="center" style="margin: 1em auto">
+					<p:commandButton value="Finalizar" actionListener="#{MBPlaylist.salvarPlaylist}" update=":mensagem"/>
+				</div>
+			</p:panel>
+		</h:form>
+				
+		<p:dialog header="Novo Estabelecimento" widgetVar="dlgNovoEstabelecimento" modal="true" width="500px">
+			<h:form id="frmNovo">
+				<div class="ui-fluid">
+					<p:panelGrid id="pgGenero" layout="grid" columns="2"
+						style="width: 100%; margin: 1em auto" styleClass="ui-panelgrid-blank form-group"
+						columnClasses="ui-grid-col-3, ui-grid-col-9">
+						
+						<p:outputLabel value="Local:" for="nome"/>
+						<p:inputText id="nome" value="#{MBPlaylist.playlist.nome}" required="true"/>
+						
+						
+					</p:panelGrid>
+				</div>
+				<div align="center">
+					<p:commandButton value="Salvar" update=":frmNovo :mensagem :frmPlaylist:pgLocal" actionListener="#{MBPlaylist.salvarPlayList}"/>
+				</div>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
