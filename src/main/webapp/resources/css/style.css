@@ -4,15 +4,28 @@
     list-style:none;
 }
 
+
+#frmMenu{
+	
+	margin-top:-40px;
+}
+
 .cardMenu {
 	display: table;
 	width: 99%;
     background-color: #000000;
-    border: 2px solid #777777;
+    border: 1px solid #777777;
     text-align: center;
-    margin: 1em auto;
+    margin: auto;
+    padding: 0;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     border-radius: 10px;
+}
+
+img{
+	
+	margin: 0px;
+	max-width: 100px;
 }
 
 .imagem{
