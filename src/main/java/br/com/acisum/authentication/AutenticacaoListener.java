@@ -45,7 +45,7 @@ public class AutenticacaoListener implements PhaseListener {
 	private boolean ehPaginaPublica() {
 		String paginaAtual = Faces.getViewId();
 
-		if (paginaAtual.contains("home.xhtml")) {
+		if (paginaAtual.contains("home.xhtml") || paginaAtual.contains("cliente_playlist.xhtml")) {
 			return true;
 		}
 

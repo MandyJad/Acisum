@@ -63,6 +63,23 @@ public class PlayListDAO extends GenericDAO<Playlist> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<Playlist> listarTodasPlaylists() throws RuntimeException {
+		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
+		try {
+
+			Criteria consulta = sessao.createCriteria(Playlist.class);
+			consulta.addOrder(Order.desc("id"));
+			List<Playlist> resultado = consulta.list();
+			return resultado;
+
+		} catch (RuntimeException exception) {
+			throw exception;
+		} finally {
+			sessao.close();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	public Playlist buscar(Long idCantor) {
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
@@ -98,6 +115,23 @@ public class PlayListDAO extends GenericDAO<Playlist> {
 				transacao.rollback();
 			}
 			throw erro;
+		} finally {
+			sessao.close();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public Playlist buscarPorId(Long playlistId) {
+		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
+		try {
+
+			Criteria consulta = sessao.createCriteria(Playlist.class);
+			consulta.add(Restrictions.eq("id", playlistId));
+			List<Playlist> resultado = consulta.list();
+			return resultado.isEmpty() ? null : resultado.get(0);
+
+		} catch (RuntimeException exception) {
+			throw exception;
 		} finally {
 			sessao.close();
 		}

@@ -51,6 +51,7 @@ public class CifraDAO extends GenericDAO<Cifra> {
 			sessao.close();
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<Cifra> listarPorCantorGenero(Long idCantor, Long idGenero) throws RuntimeException {
@@ -113,5 +114,6 @@ public class CifraDAO extends GenericDAO<Cifra> {
 			sessao.close();
 		}
 	}
+	
 	
 }

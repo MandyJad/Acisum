@@ -1,13 +1,24 @@
 package br.com.acisum.bean;
 
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 import br.com.acisum.dao.CantorDAO;
@@ -28,43 +39,44 @@ public class HomeBean implements Serializable {
 	private Cantor cantor;
 	private List<Cantor> cantores;
 	private List<Cifra> cifras;
-	private List<Cifra> cifrasSelecionadas;
+	private Cifra cifraSelecionada;
 	
 	@PostConstruct
 	private void init() {
+		
 		playlistDAO = new PlayListDAO();
 		cantores = buscarCantores();
 		cantor = new Cantor();
 		playlist = new Playlist();
 	}
 	
-	public void indicar() {
+	public void indicar() throws IOException {
+		String ipUsuario = getIPUsuario();
 		List<ItemPlaylistIndicada> novaLista = new ArrayList<>();
-		if(cifrasSelecionadas != null && !cifrasSelecionadas.isEmpty()) {
+		if(cifraSelecionada != null) {
 			List<ItemPlaylistIndicada> listaSalva = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlist.getId());
+			ItemPlaylistIndicada novaIndicacao = new ItemPlaylistIndicada();
+			novaIndicacao.setPlaylist(playlist);
+			novaIndicacao.setCifra(cifraSelecionada);
+			novaIndicacao.setPedidos(1);
+			
 			for(ItemPlaylistIndicada item : listaSalva) {
-				if(cifrasSelecionadas.contains(item.getCifra())) {
-					cifrasSelecionadas.remove(item.getCifra());
+				if(cifraSelecionada.equals(item.getCifra())) {
 					Integer valor = item.getPedidos() + 1;
 					item.setPedidos(valor);
-					novaLista.add(item);
-				} 
+					novaIndicacao = item;
+				}
 			}
+			novaLista.add(novaIndicacao);
 			
-			for(Cifra c : cifrasSelecionadas) {
-				ItemPlaylistIndicada itemNew = new ItemPlaylistIndicada();
-				itemNew.setCifra(c);
-				itemNew.setPedidos(1);
-				itemNew.setPlaylist(playlist);
-				novaLista.add(itemNew);
-			}
 			try {
 				playlistDAO.salvarPlayListIndicada(novaLista);
 				Messages.addGlobalInfo("Indicação salva com sucesso!");
 				buscarCantores();
-				cifrasSelecionadas = new ArrayList<Cifra>();
+				cifraSelecionada  = new Cifra();
 				cantor = new Cantor();
 				cifras = new ArrayList<Cifra>();
+				Faces.redirect("pages/cliente_playlist.xhtml?playlist=" + playlist.getId());
 			}catch(RuntimeException erro) {
 				System.err.println("[SALVAR LISTA]: " + erro);
 				Messages.addGlobalError("Ocorreu um erro ao tentar salvar Cifras!");
@@ -94,6 +106,27 @@ public class HomeBean implements Serializable {
 		}
 		return cantores;
 	}
+	
+	private String getIPUsuario() {
+        final ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        final Object requestObj = context.getRequest();
+ 
+        if(requestObj instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest)requestObj;
+            return httpRequest.getRemoteAddr();
+        }
+        return null; // Não foi possível identificar tipo de request
+    }
+	
+	public void eMusico() {	
+		addMessage("Caro Cliente, não é necessário cadastro para escolher sua música", "Basta selecionar o músico na barra de opções");
+	}
+	
+	public void addMessage(String summary, String detail) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+		
 
 	public Cantor getCantor() {
 		return cantor;
@@ -122,12 +155,13 @@ public class HomeBean implements Serializable {
 		this.playlist = playlist;
 	}
 
-	public List<Cifra> getCifrasSelecionadas() {
-		return cifrasSelecionadas;
+	public Cifra getCifraSelecionada() {
+		return cifraSelecionada;
 	}
 
-	public void setCifrasSelecionadas(List<Cifra> cifrasSelecionadas) {
-		this.cifrasSelecionadas = cifrasSelecionadas;
+	public void setCifraSelecionada(Cifra cifraSelecionada) {
+		this.cifraSelecionada = cifraSelecionada;
 	}
+
 
 }

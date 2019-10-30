@@ -25,17 +25,30 @@
 				<h:panelGroup layout="block"
 					rendered="#{MBLogin.usuarioSessao == 'false'}">
 					<p:commandButton value="Entrar" oncomplete="PF('dlgLogin').show();"
-						icon=" fa fa-sign-in" />
-					<p:commandButton id="cadastrar" update=":formNovo"
+						icon=" fa fa-sign-in" update=":frmHome :dialogo" >
+						 <p:confirm  message="Você é músico?" icon="fa fa-info-circle" />
+						</p:commandButton>
+					<p:commandButton id="cadastrar" update=":formNovo :dialogo"
 						value="Cadastrar" oncomplete="PF('dlgNovo').show();"
-						actionListener="#{MBLogin.novo}" icon="fa fa-pencil-square-o" />
+						actionListener="#{MBLogin.novo}" icon="fa fa-pencil-square-o">
+						<p:confirm  message="Você é músico?" icon="fa fa-info-circle" />
+						</p:commandButton>
 				</h:panelGroup>
 			</p:outputPanel>
 
 		</div>
 	</h:form>
+	
+	<h:form>          
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+        <p:commandButton value="Não" type="submit" action="#{MBHome.eMusico}" styleClass="ui-confirmdialog-no" icon="fa fa-close" update=":frmHome :dialogo" />
+    </p:confirmDialog>      
+</h:form>
 
-	<p:growl id="mensagem" showDetail="false" />
+	<p:growl id="mensagem" showDetail="false" sticky="true" />
+	<p:growl id="dialogo" showDetail="true" />
+	
 	<h:form id="frmHome">
 		<div align="center">
 			<p:selectOneMenu id="advanced"
@@ -95,13 +108,13 @@
 				</h:panelGroup>
 
 				<p:dataTable var="cifra" value="#{MBHome.cifras}"
-					selection="#{MBHome.cifrasSelecionadas}" rowKey="#{cifra.id}"
+					selection="#{MBHome.cifraSelecionada}" rowKey="#{cifra.id}"
 					style="margin: 1em auto; width:99%" reflow="true">
 
-					<p:column selectionMode="multiple"
+					<p:column selectionMode="single"
 						style="width:50px;text-align:center" />
 
-					<p:column headerText="Nome da Musica" filterBy="#{cifra.nome}"
+					<p:column headerText="Nome da Música" filterBy="#{cifra.nome}"
 						filterMatchMode="contains">
 						<h:outputText value="#{cifra.nome}" />
 					</p:column>
@@ -113,6 +126,19 @@
 				</div>
 			</p:outputPanel>
 		</p:panel>
+	</h:form>
+
+	<h:form id="frmMenu">
+		<div>
+			<p:outputPanel style="float: left;">
+				<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao}">
+					<p:commandButton style="margin-left: 10px"
+						oncomplete="PF('menu').show()" icon="fa fa-th-list" />
+				</h:panelGroup>
+			</p:outputPanel>
+
+
+		</div>
 	</h:form>
 
 	<p:dialog width="420" height="335" header="Login" widgetVar="dlgLogin"
@@ -145,19 +171,6 @@
 			</h:panelGrid>
 		</h:form>
 	</p:dialog>
-	
-		<h:form id="frmMenu">
-		<div>
-			<p:outputPanel style="float: left;">
-				<h:panelGroup layout="block" rendered="#{MBLogin.usuarioSessao}">
-					<p:commandButton style="margin-left: 10px"
-						oncomplete="PF('menu').show()" icon="fa fa-th-list" />
-				</h:panelGroup>
-			</p:outputPanel>
-
-
-		</div>
-	</h:form>
 
 	<p:dialog width="500" header="Novo Aqui" widgetVar="dlgNovo"
 		modal="true" resizable="false">

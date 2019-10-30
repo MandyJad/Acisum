@@ -17,9 +17,9 @@
 	<ui:define name="conteudo">
 		
 		<h:form id="frmPlaylists">
-			<p:poll interval="20" update=":frmPlaylists :mensagem" immediate="true" listener="#{MBMinhasPlaylist.buscarIndicadas}" />
+			<p:poll interval="10" update=":frmPlaylists :mensagem" immediate="true" listener="#{MBMinhasPlaylist.buscarIndicadas}" />
 			
-			<p:panel id="painel" style="margin: 1em auto;margin-top:50px; width: 99%" >
+			<p:panel id="painel" style="margin: 1em auto;margin-top:50px; width: 80%" >
 				<div class="ui-fluid">
 				<p:panelGrid id="pgLocal" layout="grid" columns="1"
 						style="width: 50%; margin-top: 5px; margin-bottom: 5px" styleClass="ui-panelgrid-blank form-group"
@@ -34,41 +34,24 @@
 				</p:panelGrid>
 				</div>
 				<h:panelGrid columns="2">
-				<p:dataTable reflow="true" rows="10" paginator="true" value="#{MBMinhasPlaylist.cifras}" var="cifra" style="width:100%">
-					<f:facet name="header">
-						Minhas Cifra's
-					</f:facet>
-					 
-					<p:column headerText="Nome da Musica" width="80%">
-				        <h:outputText value="#{cifra.nome}" />
-				    </p:column>
-				    
-				    <p:column width="10%">
-					    <p:commandButton value="Ver" actionListener="#{MBMinhasPlaylist.cifraPDF}" ajax="false" onclick="this.form.target = '_blank';" 
-					    	update=":frmPlaylists :mensagem">
-					    	<f:attribute name="cifraSelecionada" value="#{cifra}" />
-					    </p:commandButton>
-					</p:column>
-				</p:dataTable>
-				
-				<p:dataTable id="indicadas" reflow="true" rows="10" paginator="true" style="width:100%" 
-					value="#{MBMinhasPlaylist.itemPlayListIndicada}" var="item">
-					<f:facet name="header">
-						PlayList's do Público
-					</f:facet>
-					<p:column headerText="Nome da Musica">
-				    	<h:outputText value="#{item.cifra.nome}"/>
-				    </p:column>
-				    <p:column headerText="Pedidos" width="15%">
-				    	<h:outputText value="#{item.pedidos}"/>
-				    </p:column>
-				    <p:column width="10%">
-				         <p:commandButton value="Ver" actionListener="#{MBMinhasPlaylist.itemIndicadoPDF}" ajax="false" onclick="this.form.target = '_blank';" 
-					    	update=":frmPlaylists :mensagem">
-					    	<f:attribute name="itemSelecionada" value="#{item}" />
-					    </p:commandButton>
-				    </p:column>
-				</p:dataTable>
+					<p:dataTable id="indicadas" reflow="true" rows="10" paginator="true" style="width:100%" 
+						value="#{MBMinhasPlaylist.buscaConsolidada()}" var="item">
+						<f:facet name="header">
+							Cifras
+						</f:facet>
+						<p:column headerText="Nome da Música">
+					    	<h:outputText value="#{item.cifra.nome}"/>
+					    </p:column>
+					    <p:column headerText="Pedidos" width="15%">
+					    	<h:outputText value="#{item.pedidos}"/>
+					    </p:column>
+					    <p:column width="10%">
+					         <p:commandButton value="Ver" actionListener="#{MBMinhasPlaylist.itemIndicadoPDF}" ajax="false" onclick="this.form.target = '_blank';" 
+						    	update=":frmPlaylists :mensagem">
+						    	<f:attribute name="itemSelecionada" value="#{item}" />
+						    </p:commandButton>
+					    </p:column>
+					</p:dataTable>
 				</h:panelGrid>
 			</p:panel>	
 			

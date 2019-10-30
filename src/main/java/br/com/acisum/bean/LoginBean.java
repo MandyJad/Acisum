@@ -18,7 +18,6 @@ import org.primefaces.model.UploadedFile;
 
 import br.com.acisum.dao.UsuarioDAO;
 import br.com.acisum.domain.Cantor;
-import br.com.acisum.domain.Cifra;
 import br.com.acisum.domain.Usuario;
 import br.com.acisum.util.ArquivosUtil;
 
@@ -91,7 +90,8 @@ public class LoginBean implements Serializable {
 			Messages.addGlobalError("Ocorreu um erro, tente novamente mais tarde.");
 		}
 	}
-
+	
+	
 	public void logout() {
 		try {
 			this.usuarioLogado = null;
