@@ -93,7 +93,7 @@ public class CifraDAO extends GenericDAO<Cifra> {
 			sessao.close();
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public List<ItemPlaylistIndicada> listarCifrasIndicadasPorPlaylist(Long idPlaylist) throws RuntimeException {
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();

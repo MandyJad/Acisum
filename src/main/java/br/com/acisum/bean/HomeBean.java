@@ -4,6 +4,8 @@ package br.com.acisum.bean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,12 +14,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
@@ -34,24 +32,38 @@ import br.com.acisum.domain.Playlist;
 @ViewScoped
 public class HomeBean implements Serializable {
 
+	private static final String TIMEOUT_INDICACAO = "timeoutIndicacao";
 	private PlayListDAO playlistDAO;
 	private Playlist playlist;
 	private Cantor cantor;
 	private List<Cantor> cantores;
 	private List<Cifra> cifras;
 	private Cifra cifraSelecionada;
+	private HttpSession session;
 	
 	@PostConstruct
 	private void init() {
-		
 		playlistDAO = new PlayListDAO();
 		cantores = buscarCantores();
 		cantor = new Cantor();
 		playlist = new Playlist();
+		session = buscaSessao();
 	}
 	
+	private HttpSession buscaSessao() {
+		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		Object createdSession = context.getSession(false);
+		if (createdSession == null) {
+			return (HttpSession) context.getSession(true);
+		}
+		return (HttpSession) createdSession;
+	}
+
 	public void indicar() throws IOException {
-		String ipUsuario = getIPUsuario();
+		if (!verificaTimeoutIndicacao()) {
+			Messages.addGlobalInfo("Você ainda não pode indicar uma nova música, tente novamente mais tarde.");
+			return;
+		}
 		List<ItemPlaylistIndicada> novaLista = new ArrayList<>();
 		if(cifraSelecionada != null) {
 			List<ItemPlaylistIndicada> listaSalva = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlist.getId());
@@ -59,7 +71,6 @@ public class HomeBean implements Serializable {
 			novaIndicacao.setPlaylist(playlist);
 			novaIndicacao.setCifra(cifraSelecionada);
 			novaIndicacao.setPedidos(1);
-			
 			for(ItemPlaylistIndicada item : listaSalva) {
 				if(cifraSelecionada.equals(item.getCifra())) {
 					Integer valor = item.getPedidos() + 1;
@@ -72,6 +83,7 @@ public class HomeBean implements Serializable {
 			try {
 				playlistDAO.salvarPlayListIndicada(novaLista);
 				Messages.addGlobalInfo("Indicação salva com sucesso!");
+				adicionaTimeoutIndicacao();
 				buscarCantores();
 				cifraSelecionada  = new Cifra();
 				cantor = new Cantor();
@@ -85,6 +97,25 @@ public class HomeBean implements Serializable {
 		}
 	}
 	
+	private boolean verificaTimeoutIndicacao() {
+		Object timeoutIndicacao = session.getAttribute(TIMEOUT_INDICACAO);
+		
+		if (timeoutIndicacao == null) {
+			return true;
+		} else {
+			Calendar timeout = Calendar.getInstance();
+			timeout.setTime((Date) timeoutIndicacao);
+			timeout.add(Calendar.SECOND, 15);
+			Calendar agora = Calendar.getInstance();
+			
+			return agora.after(timeout);
+		}
+	}
+
+	private void adicionaTimeoutIndicacao() {
+		session.setAttribute(TIMEOUT_INDICACAO, new Date());
+	}
+
 	public void buscarCifras() {
 		cifras = new ArrayList<Cifra>();
 		try {
@@ -106,17 +137,6 @@ public class HomeBean implements Serializable {
 		}
 		return cantores;
 	}
-	
-	private String getIPUsuario() {
-        final ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        final Object requestObj = context.getRequest();
- 
-        if(requestObj instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = (HttpServletRequest)requestObj;
-            return httpRequest.getRemoteAddr();
-        }
-        return null; // Não foi possível identificar tipo de request
-    }
 	
 	public void eMusico() {	
 		addMessage("Caro Cliente, não é necessário cadastro para escolher sua música", "Basta selecionar o músico na barra de opções");

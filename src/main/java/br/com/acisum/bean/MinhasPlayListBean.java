@@ -19,8 +19,11 @@ import org.omnifaces.util.Messages;
 
 import antlr.debug.Event;
 import br.com.acisum.dao.CifraDAO;
+import br.com.acisum.dao.ItemPlaylistDAO;
+import br.com.acisum.dao.ItemPlaylistIndicadaDAO;
 import br.com.acisum.dao.PlayListDAO;
 import br.com.acisum.domain.Cifra;
+import br.com.acisum.domain.ItemPlaylist;
 import br.com.acisum.domain.ItemPlaylistIndicada;
 import br.com.acisum.domain.Playlist;
 import br.com.acisum.util.ArquivosUtil;
@@ -30,7 +33,7 @@ import br.com.acisum.util.HibernateUtil;
 @ManagedBean(name = "MBMinhasPlaylist")
 @ViewScoped
 public class MinhasPlayListBean implements Serializable {
-	
+
 	private List<Playlist> playlists;
 	private Long idCantor;
 	private PlayListDAO playlistDAO;
@@ -39,6 +42,11 @@ public class MinhasPlayListBean implements Serializable {
 	private List<ItemPlaylistIndicada> itemPlaylistConsolidada;
 	private List<Cifra> cifras;
 	private CifraDAO cifraDAO;
+	private ItemPlaylistIndicada ItemPlaylistIndicada;
+	private Cifra cifra;
+	private ItemPlaylist itemPlaylist;
+	private ItemPlaylistDAO itemPlaylistDAO;
+	
 
 	@PostConstruct
 	private void init() {
@@ -48,19 +56,19 @@ public class MinhasPlayListBean implements Serializable {
 		cifraDAO = new CifraDAO();
 		playlists = buscarMinhasPlayList();
 		playlist = new Playlist();
-		buscarCifras();
+		
 	}
-	
+
 	public void cifraPDF(ActionEvent evento) {
 		Cifra cifra = (Cifra) evento.getComponent().getAttributes().get("cifraSelecionada");
 		ArquivosUtil.gerarPDF(cifra);
 	}
-	
+
 	public void itemIndicadoPDF(ActionEvent evento) {
 		ItemPlaylistIndicada item = (ItemPlaylistIndicada) evento.getComponent().getAttributes().get("itemSelecionada");
 		ArquivosUtil.gerarPDF(item.getCifra());
 	}
-	
+
 	public void excluirMinhaPlay(ActionEvent evento) {
 		Playlist playlist = (Playlist) evento.getComponent().getAttributes().get("playlistSelecionada");
 		try {
@@ -68,67 +76,106 @@ public class MinhasPlayListBean implements Serializable {
 			playlists = buscarMinhasPlayList();
 			buscarCifras();
 			Messages.addGlobalInfo("PlayList excluida com sucesso!");
-		}catch(RuntimeException erro) {
+		} catch (RuntimeException erro) {
 			System.err.println("[EXCLUIR PLAYLIST]: " + erro.getMessage());
-			Messages.addGlobalError("Ocorreu um erro ao tentar excluir a PlayList!");
+			Messages.addGlobalError("Ocorreu um erro ao tentar excluir o local!");
 		}
+	}
+
+	public void excluirCifra(ActionEvent  evento) {
+		
+		try {
+			ItemPlaylistIndicada itemPlaylistIndicada = (ItemPlaylistIndicada) evento.getComponent().getAttributes().get("cifraSelecionada");
+			ItemPlaylistIndicadaDAO itemPlaylistIndicadaDAO = new ItemPlaylistIndicadaDAO();
+			ItemPlaylistDAO itemPlaylistDAO = new ItemPlaylistDAO();
+			
+			Long idPlaylist = playlist.getId();
+			Long idCifra = itemPlaylistIndicada.getCifra().getId();
+			ItemPlaylist itemPlaylist = itemPlaylistDAO.buscaItemPlaylist(idPlaylist, idCifra);
+
+			itemPlaylistIndicadaDAO.excluir(itemPlaylistIndicada);
+			if (itemPlaylist != null) {
+				itemPlaylistDAO.excluir(itemPlaylist);
+			}
+			buscarCifras();
+			
+			Messages.addGlobalInfo("Cifra excluída com sucesso!");
+			
+		} catch (RuntimeException erro) {
+			Messages.addGlobalError("Ocorreu um erro ao tentar excluir a cifra");
+			erro.printStackTrace();
+		}
+		
 	}
 
 	public List<Cifra> buscarCifras() {
 		try {
-			if(playlist.getId() == null) {
+			if (playlist.getId() == null) {
 				cifras = cifraDAO.listarPorCantor(idCantor);
-			}else {
+			} else {
 				cifras = cifraDAO.listarCifrasPorPlaylist(playlist.getId());
 			}
 			return cifras;
-			
-		}catch(RuntimeException erro) {
+
+		} catch (RuntimeException erro) {
 			System.err.println("[LISTAR CIFRAS]: " + erro.getMessage());
 			Messages.addGlobalError("Ocorreu um erro ao tentar listar as Cifras!");
 			return null;
 		}
 	}
-	
+
+	public List<Cifra> buscarCifrasPorCantor() {
+		try {
+			return cifraDAO.listarPorCantor(idCantor);
+		} catch (RuntimeException erro) {
+			System.err.println("[LISTAR CIFRAS POR CANTOR]: " + erro.getMessage());
+			Messages.addGlobalError("Ocorreu um erro ao tentar listar as Cifras!");
+			return null;
+		}
+	}
+
 	public void buscarIndicadas() {
 		itemPlayListIndicada = new ArrayList<>();
 		try {
-			if(playlist != null){
+			if (playlist != null) {
 				itemPlayListIndicada = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlist.getId());
 				buscarCifras();
 			}
-		}catch(RuntimeException erro) {
+		} catch (RuntimeException erro) {
 			System.err.println("[LISTAR CIFRAS]: " + erro.getMessage());
 			Messages.addGlobalError("Ocorreu um erro ao tentar excluir a PlayList!");
 		}
 	}
-	
+
 	public List<ItemPlaylistIndicada> buscaConsolidada() {
-		final List<Cifra> cifras = buscarCifras();
-		itemPlaylistConsolidada = new ArrayList<>(cifras.size());
 		try {
-			if(playlist != null) {
-				itemPlayListIndicada = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlist.getId());
+			itemPlaylistConsolidada = new ArrayList<>();
+
+			Long playlistId = null;
+			if (playlist != null && playlist.getId() != null) { //Playlist selecionada
+				playlistId = playlist.getId();
+			} else if (idCantor != null) { //Playlist do Cantor
+				playlistId = new PlayListDAO().buscar(idCantor).getId();
+			} else { //Primeira Playlist do banco
+				playlistId = new PlayListDAO().listarTodasPlaylists().get(0).getId();
 			}
+			itemPlayListIndicada = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlistId);
 			
-			for (Cifra cifra : cifras) {
-				ItemPlaylistIndicada indicada = buscaItemPlaylistIndicada(cifra);
-				if (indicada != null) {
-					ItemPlaylistIndicada consolidada = new ItemPlaylistIndicada();
-					consolidada.setCifra(cifra);
-					consolidada.setPedidos(indicada.getPedidos());
-					itemPlaylistConsolidada.add(consolidada);
-					Collections.reverse(itemPlaylistConsolidada); 
-					
-				} else {
-					ItemPlaylistIndicada consolidada = new ItemPlaylistIndicada();
-					consolidada.setCifra(cifra);
-					consolidada.setPedidos(0);
-					itemPlaylistConsolidada.add(consolidada);
+			if (itemPlayListIndicada != null) {
+				for (ItemPlaylistIndicada indicada : itemPlayListIndicada) {
+					itemPlaylistConsolidada.add(indicada);
 				}
-	
 			}
-			
+			final List<Cifra> cifrasPlaylist = cifraDAO.listarCifrasPorPlaylist(playlist.getId());
+			for (Cifra itemPlaylist : cifrasPlaylist) {
+				if (!buscaCifraEmLista(itemPlaylist, itemPlaylistConsolidada)) {
+					ItemPlaylistIndicada itemPlaylistCifra = new ItemPlaylistIndicada();
+					itemPlaylistCifra.setCifra(itemPlaylist);
+					itemPlaylistCifra.setPedidos(0);
+					itemPlaylistConsolidada.add(itemPlaylistCifra);
+				}
+			}
+
 			return itemPlaylistConsolidada;
 		} catch(RuntimeException erro) {
 			System.err.println("[LISTAR CIFRAS]: " + erro.getMessage());
@@ -138,19 +185,16 @@ public class MinhasPlayListBean implements Serializable {
 		
 	}
 	
-
-	private ItemPlaylistIndicada buscaItemPlaylistIndicada(Cifra cifra) {
-		if (itemPlayListIndicada == null) {
-			return null;
-		}
-		for (ItemPlaylistIndicada indicada : itemPlayListIndicada) {
-			if (indicada.getCifra().equals(cifra)) {
-				return indicada;
+	
+	private boolean buscaCifraEmLista(Cifra cifra, List<ItemPlaylistIndicada> lista) {
+		for (ItemPlaylistIndicada item : lista) {
+			if (item.getCifra().equals(cifra)) {
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
-
+	
 	private List<Playlist> buscarMinhasPlayList() {
 		List<Playlist> playlists = new ArrayList<>();
 		try {
@@ -195,7 +239,7 @@ public class MinhasPlayListBean implements Serializable {
 	public void setPlaylists(List<Playlist> playlists) {
 		this.playlists = playlists;
 	}
-	
+
 	public List<ItemPlaylistIndicada> getItemPlaylistConsolidada() {
 		return itemPlaylistConsolidada;
 	}
@@ -203,5 +247,21 @@ public class MinhasPlayListBean implements Serializable {
 	public void setItemPlaylistConsolidada(List<ItemPlaylistIndicada> itemPlaylistConsolidada) {
 		this.itemPlaylistConsolidada = itemPlaylistConsolidada;
 	}
-	
+
+	public ItemPlaylistIndicada getItemPlaylistIndicada() {
+		return ItemPlaylistIndicada;
+	}
+
+	public void setItemPlaylistIndicada(ItemPlaylistIndicada itemPlaylistIndicada) {
+		ItemPlaylistIndicada = itemPlaylistIndicada;
+	}
+
+	public Cifra getCifra() {
+		return cifra;
+	}
+
+	public void setCifra(Cifra cifra) {
+		this.cifra = cifra;
+	}
+
 }

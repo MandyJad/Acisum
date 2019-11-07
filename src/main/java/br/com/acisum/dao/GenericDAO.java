@@ -44,7 +44,6 @@ public class GenericDAO<Entidade> implements Serializable {
 
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
-
 			Criteria consulta = sessao.createCriteria(classe);
 			consulta.add(Restrictions.idEq(codigo));
 			Entidade resultado = (Entidade) consulta.uniqueResult();

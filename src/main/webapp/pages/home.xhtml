@@ -11,8 +11,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	</f:facet>
 	<title>Acisum - Home</title>
+	
 </h:head>
-
 <h:body
 	style="background-image: url('/Acisum/resources/img/fone_wallpaper.jpg'); background-size:100%; min-heigth:500px;">
 	<h:form>
@@ -55,7 +55,7 @@
 				converter="omnifaces.SelectItemsConverter" style="width:40%;"
 				panelStyle="width:40%" effect="fade" var="c" filter="true"
 				value="#{MBHome.cantor}">
-				<f:selectItem itemLabel="Selecione um cantor"
+				<f:selectItem itemLabel="Selecione um músico"
 					noSelectionOption="true" />
 				<f:selectItems value="#{MBHome.cantores}" var="cantor"
 					itemValue="#{cantor}" itemLabel="#{cantor.nome}" />
@@ -89,7 +89,7 @@
 						</f:facet>
 						<p:row>
 							<p:column>
-								<h:outputText value="Cantor:" style="font-weight: bold;" />
+								<h:outputText value="Músico:" style="font-weight: bold;" />
 							</p:column>
 							<p:column>
 								<h:outputText value="#{MBHome.cantor.nome}" />
@@ -121,7 +121,7 @@
 				</p:dataTable>
 
 				<div align="center">
-					<p:commandButton value="Enviar" actionListener="#{MBHome.indicar}"
+					<p:commandButton id="enviar" value="Enviar" actionListener="#{MBHome.indicar}"
 						update=":frmHome :mensagem" />
 				</div>
 			</p:outputPanel>
@@ -150,7 +150,7 @@
 			<h:panelGrid id="painel" cellspacing="10">
 				<h:panelGrid columns="2">
 					<i class="fa fa-fw fa-user"></i>
-					<p:inputText placeholder="E-mail ou usuário" size="30"
+					<p:inputText placeholder="E-mail" size="30"
 						value="#{MBLogin.usuario.email}" required="true"
 						requiredMessage="Campo Login é obrigatório" />
 				</h:panelGrid>
@@ -203,7 +203,7 @@
 				</p:panelGrid>
 			</div>
 			<div align="center">
-				<p:commandButton value="Salvar" update=":formNovo :mensagem"
+				<p:commandButton name="salvar" value="Salvar" update=":formNovo :mensagem"
 					actionListener="#{MBLogin.salvar}" />
 			</div>
 		</h:form>

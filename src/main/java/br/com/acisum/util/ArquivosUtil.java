@@ -17,8 +17,8 @@ import br.com.acisum.domain.Cifra;
 
 public class ArquivosUtil {
 	
-	private static final String CAMINHO = "c:/Acisum/Uploads/cifras/";
-	private static final String CAMINHO_IMG = "c:/Acisum/Uploads/imagens/cantor_";
+	private static final String CAMINHO = "/Acisum/Uploads/cifras/";
+	private static final String CAMINHO_IMG = "/Acisum/Uploads/imagens/cantor_";
 
 	public static void gerarPDF(Cifra cifra) {
 		try {

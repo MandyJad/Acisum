@@ -78,7 +78,7 @@ public class LoginBean implements Serializable {
 			Usuario user = usuarioDAO.autenticar(usuario);
 
 			if (user == null) {
-				Messages.addGlobalWarn("Usuário e/ou senha invalido!");
+				Messages.addGlobalWarn("Email e/ou senha invalido!");
 				return;
 			} 
 

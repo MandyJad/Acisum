@@ -1,3 +1,4 @@
+
 package br.com.acisum.bean;
 
 import java.io.IOException;
@@ -122,7 +123,7 @@ public class CifraBean implements Serializable {
 			String nomeArquivo = arquivoUpload.getFileName();
 			cifra.setNome(nomeArquivo);
 			uploadCifras.add(cifra);
-			Messages.addGlobalInfo("Upload realizado com sucesso");
+			Messages.addGlobalInfo("Clique no botão salvar");
 		} catch (IOException erro) {
 			Messages.addGlobalInfo("Ocorreu um erro ao tentar realizar o upload de arquivo");
 			System.err.println("[UPLOAD]: " + erro);

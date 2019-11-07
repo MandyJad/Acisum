@@ -28,8 +28,8 @@
 							<p:commandButton icon="fa fa-plus" actionListener="#{MBCifra.novoGenero}" oncomplete="PF('dlgNovoGenero').show();"/>
 						</p:panelGrid>
 					</div>
-					<p:growl id="upload" showDetail="true" />
-					<p:fileUpload id="fileUpload" label="Cifra" fileUploadListener="#{MBCifra.upload}" mode="advanced" uploadLabel="Upload" 
+					<p:growl id="upload" showDetail="false" />
+					<p:fileUpload id="fileUpload" label="Cifra" fileUploadListener="#{MBCifra.upload}" mode="advanced"  auto="true" uploadLabel="Upload" 
 						cancelLabel="Cancelar" allowTypes="/(\.|\/)(pdf)$/" multiple="true" invalidFileMessage="Tipo de arquivo inválido!"
 						onerror="console.log('Erro na requisição de envio')" fileLimit="10" update="mensagem"/>
 						
@@ -38,7 +38,7 @@
 					</div>
 					
 					<f:facet name="footer">
-						<p:button href="minhas_playlist.xhtml" value="Ver minhas cifras" style="width:610px;" />
+						<p:button href="playlist.xhtml" value="Montar minha playlist" style="width:610px;" />
 					</f:facet>
 				</p:panel>
 			</div>

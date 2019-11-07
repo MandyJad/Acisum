@@ -1,62 +1,91 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
- 
-<style type="text/css">
-    .value {
-        font-weight: bold;
-    }
+
+	<style type="text/css">
+.value {
+	font-weight: bold;
+}
 </style>
-	
+
+	<p:growl id="mensagem" showDetail="false" sticky="true" />
+
 	<ui:define name="titulo">
 		<title>Acisum - Minhas Playlist</title>
 	</ui:define>
-	
+
 	<ui:define name="conteudo">
-		
+
 		<h:form id="frmPlaylists">
-			<p:poll interval="10" update=":frmPlaylists :mensagem" immediate="true" listener="#{MBMinhasPlaylist.buscarIndicadas}" />
-			
-			<p:panel id="painel" style="margin: 1em auto;margin-top:50px; width: 80%" >
+			<p:poll interval="10" update=":frmPlaylists :mensagem"
+				immediate="true" listener="#{MBMinhasPlaylist.buscarIndicadas}" />
+
+			<p:panel id="painel"
+				style="margin: 1em auto;margin-top:50px; width: 70%">
 				<div class="ui-fluid">
-				<p:panelGrid id="pgLocal" layout="grid" columns="1"
-						style="width: 50%; margin-top: 5px; margin-bottom: 5px" styleClass="ui-panelgrid-blank form-group"
+					<p:panelGrid id="pgLocal" layout="grid" columns="1"
+						style="width: 50%; margin-top: 5px; margin-bottom: 5px"
+						styleClass="ui-panelgrid-blank form-group"
 						columnClasses="ui-grid-col-10">
-				
-					<p:selectOneMenu id="advanced"  converter="omnifaces.SelectItemsConverter" filter="true" value="#{MBMinhasPlaylist.playlist}">
-			             <f:selectItem itemLabel="Selecione o local" noSelectionOption="true"/>
-			             <f:selectItems value="#{MBMinhasPlaylist.playlists}" var="playlist" itemValue="#{playlist}" itemLabel="#{playlist.nome}"/>
-					     <p:ajax listener="#{MBMinhasPlaylist.buscarIndicadas}" update=":frmPlaylists :mensagem" />
-			        </p:selectOneMenu>
-				
-				</p:panelGrid>
+
+						<p:selectOneMenu id="advanced"
+							converter="omnifaces.SelectItemsConverter" filter="true"
+							value="#{MBMinhasPlaylist.playlist}">
+							<f:selectItem itemLabel="Selecione o local"
+								noSelectionOption="true" />
+							<f:selectItems value="#{MBMinhasPlaylist.playlists}"
+								var="playlist" itemValue="#{playlist}"
+								itemLabel="#{playlist.nome}" />
+							<p:ajax listener="#{MBMinhasPlaylist.buscarIndicadas}"
+								update=":frmPlaylists :mensagem" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
 				</div>
 				<h:panelGrid columns="2">
-					<p:dataTable id="indicadas" reflow="true" rows="10" paginator="true" style="width:100%" 
+					<p:dataTable id="indicadas" reflow="true" rows="10"
+						paginator="true" style="width:100%"
 						value="#{MBMinhasPlaylist.buscaConsolidada()}" var="item">
 						<f:facet name="header">
 							Cifras
 						</f:facet>
-						<p:column headerText="Nome da Música">
-					    	<h:outputText value="#{item.cifra.nome}"/>
-					    </p:column>
-					    <p:column headerText="Pedidos" width="15%">
-					    	<h:outputText value="#{item.pedidos}"/>
-					    </p:column>
-					    <p:column width="10%">
-					         <p:commandButton value="Ver" actionListener="#{MBMinhasPlaylist.itemIndicadoPDF}" ajax="false" onclick="this.form.target = '_blank';" 
-						    	update=":frmPlaylists :mensagem">
-						    	<f:attribute name="itemSelecionada" value="#{item}" />
-						    </p:commandButton>
-					    </p:column>
+						<p:column headerText="Nome da Música" width="65%">
+							<h:outputText value="#{item.cifra.nome}" />
+						</p:column>
+						<p:column headerText="Pedidos" width="10%">
+							<h:outputText value="#{item.pedidos}" />
+						</p:column>
+						<p:column width="10%">
+							<p:commandButton style="float:left;"
+								icon="fa fa-fw fa-external-link"
+								actionListener="#{MBMinhasPlaylist.itemIndicadoPDF}"
+								ajax="false" onclick="this.form.target = '_blank';"
+								update=":frmPlaylists :mensagem">
+								<f:attribute name="itemSelecionada" value="#{item}" />
+							</p:commandButton>
+							<p:commandButton style="float:right;" icon="fa fa-fw fa-trash-o"
+								actionListener="#{MBMinhasPlaylist.excluirCifra}"
+								update=":frmPlaylists :mensagem">
+								<p:confirm message="Deseja realmente excluir?"
+									icon="pi pi-exclamation-triangle" />
+								<f:attribute name="cifraSelecionada" value="#{item}" />
+							</p:commandButton>
+						</p:column>
 					</p:dataTable>
 				</h:panelGrid>
-			</p:panel>	
-			
+			</p:panel>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+			</p:confirmDialog>
+
 		</h:form>
-		
+
 	</ui:define>
-	
+
 </ui:composition>
