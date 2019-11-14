@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -108,6 +107,21 @@ public class CifraDAO extends GenericDAO<Cifra> {
 			itens = consulta.list();
 			
 			return itens;
+		} catch (RuntimeException erro) {
+			throw erro;
+		} finally {
+			sessao.close();
+		}
+	}
+
+	public Cifra buscarPeloNome(String nome) {
+		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
+		try {
+			
+			Criteria consulta = sessao.createCriteria(Cifra.class);
+			consulta.add(Restrictions.eq("nome", nome));
+			
+			return (Cifra) consulta.uniqueResult();
 		} catch (RuntimeException erro) {
 			throw erro;
 		} finally {

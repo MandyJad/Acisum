@@ -148,6 +148,7 @@ public class MinhasPlayListBean implements Serializable {
 	}
 
 	public List<ItemPlaylistIndicada> buscaConsolidada() {
+		
 		try {
 			itemPlaylistConsolidada = new ArrayList<>();
 
@@ -159,7 +160,6 @@ public class MinhasPlayListBean implements Serializable {
 			} else { //Primeira Playlist do banco
 				playlistId = new PlayListDAO().listarTodasPlaylists().get(0).getId();
 			}
-			itemPlayListIndicada = new CifraDAO().listarCifrasIndicadasPorPlaylist(playlistId);
 			
 			if (itemPlayListIndicada != null) {
 				for (ItemPlaylistIndicada indicada : itemPlayListIndicada) {
@@ -179,7 +179,6 @@ public class MinhasPlayListBean implements Serializable {
 			return itemPlaylistConsolidada;
 		} catch(RuntimeException erro) {
 			System.err.println("[LISTAR CIFRAS]: " + erro.getMessage());
-			Messages.addGlobalError("Ocorreu um erro ao tentar listar a PlayList!");
 			return null;
 		}
 		

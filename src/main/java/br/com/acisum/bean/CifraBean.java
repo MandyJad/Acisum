@@ -95,6 +95,10 @@ public class CifraBean implements Serializable {
 			}
 			
 			for(Cifra c : uploadCifras) {
+				if (cifraExistente(c.getNome())) {
+					Messages.addGlobalInfo("Cifra já existente!");
+					continue;
+				}
 				
 				c.setCantor(new CantorDAO().buscar(idCantor));
 				c.setGenero(genero);
@@ -103,6 +107,7 @@ public class CifraBean implements Serializable {
 				ArquivosUtil.salvarPDF(c);
 				Messages.addGlobalInfo("Cifra salva com sucesso!");
 			}
+			uploadCifras.clear(); 
 			
 		}catch (RuntimeException erro) {
 			System.err.println("[SALVAR CIFRAS]: " + erro);
@@ -110,6 +115,10 @@ public class CifraBean implements Serializable {
 		} 
 	}
 	
+	private boolean cifraExistente(String nome) {
+		return cifraDAO.buscarPeloNome(nome) != null;
+	}
+
 	public void upload(FileUploadEvent evento) {
 		
 		try {

@@ -56,17 +56,26 @@ public class LoginBean implements Serializable {
 	
 	public void salvar() {
 		try {
+			if (emailExistente(usuario.getEmail())) {
+				Messages.addGlobalInfo("E-mail já existe no cadastro!");
+				return;
+			}
+			
 			usuario.setCantor(cantor);
 			Usuario user = usuarioDAO.salvar(usuario);
 			ArquivosUtil.salvarIMG(arquivo, user.getCantor().getId());
 			Messages.addGlobalInfo("Salvo com sucesso!");
-			PrimeFaces.current().executeScript("PF('dlgNovo').hide();");
-		} catch (RuntimeException erro) {
+			PrimeFaces.current().executeScript("PF('dlgNovo').hide();");	
+		}catch (RuntimeException erro) {
 			System.err.println("[SALVAR NOVO USUARIO]: " + erro);
 			Messages.addGlobalError("Ocorreu um erro, tente novamente mais tarde.");
-		}
+			}
 	}
 	
+	private boolean emailExistente(String email) {
+		return usuarioDAO.buscarEmail(email) != null;
+	}
+
 	public void novo() {
 		usuario = new Usuario();
 		cantor = new Cantor();
@@ -80,7 +89,7 @@ public class LoginBean implements Serializable {
 			if (user == null) {
 				Messages.addGlobalWarn("Email e/ou senha invalido!");
 				return;
-			} 
+			}
 
 			this.usuarioLogado = user;
 			System.out.println("Usuario Logado: " + this.usuario.getEmail());

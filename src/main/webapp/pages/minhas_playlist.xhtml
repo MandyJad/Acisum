@@ -45,7 +45,7 @@
 					</p:panelGrid>
 				</div>
 				<h:panelGrid columns="2">
-					<p:dataTable id="indicadas" reflow="true" rows="10"
+					<p:dataTable id="indicadas" emptyMessage="Nenhum local selecionado." reflow="true" rows="10"
 						paginator="true" style="width:100%"
 						value="#{MBMinhasPlaylist.buscaConsolidada()}" var="item">
 						<f:facet name="header">

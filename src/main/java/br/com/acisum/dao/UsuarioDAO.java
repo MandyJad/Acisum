@@ -12,8 +12,6 @@ import br.com.acisum.util.HibernateUtil;
 @SuppressWarnings("serial")
 public class UsuarioDAO extends GenericDAO<Usuario> {
 	
-	
-
 	public Usuario autenticar(Usuario usuario) throws RuntimeException {
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
@@ -51,5 +49,20 @@ public class UsuarioDAO extends GenericDAO<Usuario> {
 		}
 		return user;
 	}
+	
+	public Usuario buscarEmail(String email) throws RuntimeException {
 
+		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
+		try {
+			Criteria consulta = sessao.createCriteria(Usuario.class);
+			consulta.add(Restrictions.eq("email", email));
+			Usuario resultado = (Usuario) consulta.uniqueResult();
+			return resultado;
+
+		} catch (RuntimeException exception) {
+			throw exception;
+		} finally {
+			sessao.close();
+		}
+	}
 }

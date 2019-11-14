@@ -71,6 +71,9 @@
 				<p:column>
 					<h:outputText value="#{c.nome}" />
 				</p:column>
+				<p:column>
+					<h:outputText value="#{c.playlist.nome}" />
+				</p:column>
 			</p:selectOneMenu>
 		</div>
 
@@ -83,7 +86,7 @@
 						<f:facet name="header">
 							<p:row>
 								<p:column colspan="3">
-									<h:outputText value="Dados do Cantor" />
+									<h:outputText value="Dados do Músico" />
 								</p:column>
 							</p:row>
 						</f:facet>
@@ -107,7 +110,7 @@
 					</p:panelGrid>
 				</h:panelGroup>
 
-				<p:dataTable var="cifra" value="#{MBHome.cifras}"
+				<p:dataTable var="cifra" emptyMessage="Nenhum músico selecionado." value="#{MBHome.cifras}"
 					selection="#{MBHome.cifraSelecionada}" rowKey="#{cifra.id}"
 					style="margin: 1em auto; width:99%" reflow="true">
 
@@ -152,7 +155,7 @@
 					<i class="fa fa-fw fa-user"></i>
 					<p:inputText placeholder="E-mail" size="30"
 						value="#{MBLogin.usuario.email}" required="true"
-						requiredMessage="Campo Login é obrigatório" />
+						requiredMessage="Campo E-mail é obrigatório" />
 				</h:panelGrid>
 				<h:panelGrid columns="2">
 					<i class="fa fa-fw fa-lock"></i>
