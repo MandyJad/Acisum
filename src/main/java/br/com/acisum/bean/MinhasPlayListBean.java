@@ -158,7 +158,7 @@ public class MinhasPlayListBean implements Serializable {
 			} else if (idCantor != null) { //Playlist do Cantor
 				playlistId = new PlayListDAO().buscar(idCantor).getId();
 			} else { //Primeira Playlist do banco
-				playlistId = new PlayListDAO().listarTodasPlaylists().get(0).getId();
+				playlistId = new PlayListDAO().listarTodasPlaylists(idCantor).get(0).getId();
 			}
 			
 			if (itemPlayListIndicada != null) {
@@ -166,7 +166,7 @@ public class MinhasPlayListBean implements Serializable {
 					itemPlaylistConsolidada.add(indicada);
 				}
 			}
-			final List<Cifra> cifrasPlaylist = cifraDAO.listarCifrasPorPlaylist(playlist.getId());
+			final List<Cifra> cifrasPlaylist = cifraDAO.listarCifrasPorPlaylist(playlistId);
 			for (Cifra itemPlaylist : cifrasPlaylist) {
 				if (!buscaCifraEmLista(itemPlaylist, itemPlaylistConsolidada)) {
 					ItemPlaylistIndicada itemPlaylistCifra = new ItemPlaylistIndicada();

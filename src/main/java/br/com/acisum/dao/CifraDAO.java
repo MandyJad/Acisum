@@ -114,12 +114,13 @@ public class CifraDAO extends GenericDAO<Cifra> {
 		}
 	}
 
-	public Cifra buscarPeloNome(String nome) {
+	public Cifra buscarPeloNome(String nome, Long idCantor) {
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
 			
 			Criteria consulta = sessao.createCriteria(Cifra.class);
 			consulta.add(Restrictions.eq("nome", nome));
+			consulta.add(Restrictions.eq("cantor.id", idCantor));
 			
 			return (Cifra) consulta.uniqueResult();
 		} catch (RuntimeException erro) {

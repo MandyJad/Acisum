@@ -6,40 +6,70 @@
 
 	<ui:define name="titulo">
 		<title>Acisum - Cifras</title>
+
 	</ui:define>
 
 	<ui:define name="conteudo">
-		
+
 		<h:form id="form">
-			<p:panel style=" margin: 5em auto; width: 80%">
+			<p:panel id="panel" style="margin: 5em auto; width: 60%">
 				<div align="center">
-					<p:graphicImage  id="foto" value="#{imagemBean.foto}" styleClass="perfil">
-	                	<f:param name="caminho" value="#{MBPerfil.usuario.cantor.id}"/>
-	                </p:graphicImage>
+					<p:graphicImage id="foto" value="#{imagemBean.foto}"
+						styleClass="perfil">
+						<f:param name="caminho" value="#{MBPerfil.usuario.cantor.id}" />
+					</p:graphicImage>
 				</div>
 				<div class="ui-fluid">
-				<p:panelGrid id="pgNovo" layout="grid" columns="2"
-						style="width: 100%;" styleClass="ui-panelgrid-blank form-group"
-						columnClasses="ui-grid-col-2, ui-grid-col-7">
-						
-						<p:outputLabel for="nome" value="Nome: "/>
-						<p:inputText id="nome" value="#{MBPerfil.usuario.cantor.nome}" required="true" requiredMessage="Nome é obrigatório!"/>
-						<p:outputLabel for="email" value="Email: "/>
-						<p:inputText id="email" value="#{MBPerfil.usuario.email}" required="true" requiredMessage="Email é obrigatório!"/>
-						<p:outputLabel for="senha" value="Senha: "/>
-						<p:password id="senha" value="#{MBPerfil.senha}" match="senha2"  feedback="true" 
-							requiredMessage="Senha é obrigatório!" validatorMessage="Senhas diferentes!"/>
-						<p:outputLabel for="senha2" value="Confirme Senha: "/>
-						<p:password id="senha2" value="#{MBPerfil.senha}" />
-						<p:outputLabel value=""/>
-						<p:fileUpload id="upload" fileUploadListener="#{MBPerfil.upload}" label="Escolher foto" allowTypes="/(\.|\/)(jpg)$/"  
-							invalidFileMessage="Tipo de arquivo inválido!" update=":mensagem" auto="true" />
-				</p:panelGrid>
+					<h:panelGrid id="pgNovo" style="margin:0 auto; width:85%;"
+						layout="grid" cellspacing="10" columns="1">
+						<p:inputText id="nome" placeholder="Nome"
+							value="#{MBPerfil.usuario.cantor.nome}" required="true"
+							requiredMessage="Nome é obrigatório!" />
+						<p:inputText id="email" placeholder="E-mail"
+							value="#{MBPerfil.usuario.email}" required="true"
+							requiredMessage="Email é obrigatório!" />
+						<p:password id="senhaAtual" placeholder="Senha Atual"
+							value="#{MBPerfil.senhaAtual}"
+							requiredMessage="Senha Atual é obrigatório!"
+							validatorMessage="Senha atual diferente do cadastro!" />
+						<p:password id="senha" placeholder="Senha"
+							value="#{MBPerfil.senha}" match="senha2" feedback="true"
+							requiredMessage="Senha é obrigatório!"
+							validatorMessage="Senhas diferentes!" />
+						<p:password id="senha2" placeholder="Confirmar senha"
+							value="#{MBPerfil.senha}" />
+					</h:panelGrid>
+					<p:fileUpload style="margin:0 auto; width:82%" id="upload"
+						fileUploadListener="#{MBPerfil.upload}" label="Escolher foto"
+						allowTypes="/(\.|\/)(jpg)$/"
+						invalidFileMessage="Tipo de arquivo inválido!" update=":mensagem"
+						auto="true" />
 				</div>
 				<div align="center" style="margin: 1em auto">
-					<p:commandButton value="Salvar" update=":form:foto,pgNovo :mensagem" actionListener="#{MBPerfil.salvar}"/>
+					<p:commandButton style="margin:0 auto;" value="Salvar"
+						update=":form:foto :mensagem" actionListener="#{MBPerfil.salvar}" />
+					<div>
+						<p:commandLink rendered="#{MBLogin.usuarioSessao}" id="excluirConta" action="#{MBPerfil.excluir}"
+							style="float:right;">
+							<p:confirm
+								message="Deseja realmente excluir sua conta? 
+							Perderá todos os dados cadastrados! "
+								icon="fa fa-times-circle" />
+							<h:outputText value="Excluir conta" />
+						</p:commandLink>
+					</div>
 				</div>
 			</p:panel>
+
+			<p:confirmDialog global="true">
+				<div align="center">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+				</div>
+			</p:confirmDialog>
+
 		</h:form>
 
 	</ui:define>

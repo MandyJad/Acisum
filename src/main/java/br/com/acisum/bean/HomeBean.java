@@ -40,7 +40,6 @@ public class HomeBean implements Serializable {
 	private List<Cifra> cifras;
 	private Cifra cifraSelecionada;
 	private HttpSession session;
-	private List<Playlist> playlists;
 	
 	@PostConstruct
 	private void init() {
@@ -83,7 +82,7 @@ public class HomeBean implements Serializable {
 			
 			try {
 				playlistDAO.salvarPlayListIndicada(novaLista);
-				Messages.addGlobalInfo("Música escolhida com sucesso!");
+				Messages.addGlobalInfo("Indicação salva com sucesso!");
 				adicionaTimeoutIndicacao();
 				buscarCantores();
 				cifraSelecionada  = new Cifra();
@@ -92,7 +91,7 @@ public class HomeBean implements Serializable {
 				Faces.redirect("pages/cliente_playlist.xhtml?playlist=" + playlist.getId());
 			}catch(RuntimeException erro) {
 				System.err.println("[SALVAR LISTA]: " + erro);
-				Messages.addGlobalError("Ocorreu um erro ao tentar listar as Cifras!");
+				Messages.addGlobalError("Ocorreu um erro ao tentar salvar Cifras!");
 			}
 			
 		}
@@ -119,10 +118,9 @@ public class HomeBean implements Serializable {
 
 	public void buscarCifras() {
 		cifras = new ArrayList<Cifra>();
-		playlists = new ArrayList<Playlist>();
 		try {
 			cifras = new CifraDAO().listarPorCantor(cantor.getId());
-			playlists = playlistDAO.listarPorCantor(playlist.getCantor().getId());
+			playlist = playlistDAO.buscar(cantor.getId());
 		}catch(RuntimeException erro) {
 			System.err.println("[LISTAR CIFRAS]: " + erro);
 			Messages.addGlobalError("Ocorreu um erro ao tentar listar Cifras!");

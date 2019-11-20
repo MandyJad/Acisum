@@ -63,11 +63,12 @@ public class PlayListDAO extends GenericDAO<Playlist> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Playlist> listarTodasPlaylists() throws RuntimeException {
+	public List<Playlist> listarTodasPlaylists(Long idCantor) throws RuntimeException {
 		Session sessao = HibernateUtil.getFabricaDeSessoes().openSession();
 		try {
 
 			Criteria consulta = sessao.createCriteria(Playlist.class);
+			consulta.add(Restrictions.eq("cantor.id", idCantor));
 			consulta.addOrder(Order.desc("id"));
 			List<Playlist> resultado = consulta.list();
 			return resultado;

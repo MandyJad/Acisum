@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -27,7 +26,7 @@ public class Usuario extends GenericDomain {
 	@Column(length = 64, nullable = false)
 	@NotEmpty(message = "Senha é obrigatório!")
 	private String senha;
-
+	
 	public Cantor getCantor() {
 		return cantor;
 	}

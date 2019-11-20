@@ -95,7 +95,7 @@ public class CifraBean implements Serializable {
 			}
 			
 			for(Cifra c : uploadCifras) {
-				if (cifraExistente(c.getNome())) {
+				if (cifraExistente(c.getNome(), idCantor)) {
 					Messages.addGlobalInfo("Cifra já existente!");
 					continue;
 				}
@@ -115,8 +115,8 @@ public class CifraBean implements Serializable {
 		} 
 	}
 	
-	private boolean cifraExistente(String nome) {
-		return cifraDAO.buscarPeloNome(nome) != null;
+	private boolean cifraExistente(String nome, Long idCantor) {
+		return cifraDAO.buscarPeloNome(nome, idCantor) != null;
 	}
 
 	public void upload(FileUploadEvent evento) {
