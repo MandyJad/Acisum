@@ -41,12 +41,9 @@ public class PerfilBean implements Serializable {
 	}
 
 	public void salvar() {
+		System.out.println("Nome: " + usuario.getCantor().getNome());
 		try {
-			if (emailExistente(usuario.getEmail())) {
-				Messages.addGlobalInfo("E-mail já existe no cadastro!");
-				return;
-			}
-			if (senha == null || senha.isEmpty()) {
+			if (senhaAtual == null || senhaAtual.isEmpty()) {
 				Messages.addGlobalInfo("Entre com uma senha válida!");
 				return;
 			}
@@ -54,19 +51,19 @@ public class PerfilBean implements Serializable {
 				Messages.addGlobalInfo("Senha atual diferente do cadastro!");
 				return;
 			}
-			usuario.setSenha(senha);
+			if (senha != null && !senha.isEmpty()) {
+				usuario.setSenha(senha);
+			}
 			usuario = usuarioDAO.salvar(usuario);
 			ArquivosUtil.salvarIMG(arquivo, usuario.getCantor().getId());
 			Messages.addGlobalInfo("Usuário salvo com sucesso!");
+			this.refresh();
 		} catch (RuntimeException erro) {
 			System.err.println("[SALVAR USUARIO]: " + erro);
 			Messages.addGlobalError("Ocorreu um erro, tente novamente mais tarde.");
 		}
 	}
-	
-	private boolean emailExistente(String email) {
-		return usuarioDAO.buscarEmail(email) != null;
-	}
+
 
 	public void upload(FileUploadEvent evento) {
 
@@ -98,6 +95,16 @@ public class PerfilBean implements Serializable {
 		}
 		
 		
+	}
+	
+	
+	public void refresh() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		Application application = context.getApplication();
+		ViewHandler viewHandler = application.getViewHandler();
+		UIViewRoot viewRoot = viewHandler.createView(context, context.getViewRoot().getViewId());
+		context.setViewRoot(viewRoot);
+		context.renderResponse();
 	}
 	
 	public String getSenha() {

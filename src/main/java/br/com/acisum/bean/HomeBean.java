@@ -105,7 +105,7 @@ public class HomeBean implements Serializable {
 		} else {
 			Calendar timeout = Calendar.getInstance();
 			timeout.setTime((Date) timeoutIndicacao);
-			timeout.add(Calendar.SECOND, 15);
+			timeout.add(Calendar.SECOND, 10);
 			Calendar agora = Calendar.getInstance();
 			
 			return agora.after(timeout);

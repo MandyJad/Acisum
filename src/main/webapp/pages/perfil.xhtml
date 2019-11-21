@@ -5,13 +5,18 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
 	<ui:define name="titulo">
-		<title>Acisum - Cifras</title>
+		<title>Acisum - Perfil</title>
 
 	</ui:define>
 
 	<ui:define name="conteudo">
+	
+	<p:poll interval="5" update=":form:foto"
+				immediate="true" listener="#{imagemBean.foto}" />
+	
 
 		<h:form id="form">
+		
 			<p:panel id="panel" style="margin: 5em auto; width: 60%">
 				<div align="center">
 					<p:graphicImage id="foto" value="#{imagemBean.foto}"
@@ -25,7 +30,7 @@
 						<p:inputText id="nome" placeholder="Nome"
 							value="#{MBPerfil.usuario.cantor.nome}" required="true"
 							requiredMessage="Nome é obrigatório!" />
-						<p:inputText id="email" placeholder="E-mail"
+						<p:inputText id="email" disabled="true" placeholder="E-mail"
 							value="#{MBPerfil.usuario.email}" required="true"
 							requiredMessage="Email é obrigatório!" />
 						<p:password id="senhaAtual" placeholder="Senha Atual"

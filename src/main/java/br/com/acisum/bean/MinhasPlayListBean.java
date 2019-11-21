@@ -56,6 +56,7 @@ public class MinhasPlayListBean implements Serializable {
 		cifraDAO = new CifraDAO();
 		playlists = buscarMinhasPlayList();
 		playlist = new Playlist();
+		buscarCifras();
 		
 	}
 
@@ -75,7 +76,7 @@ public class MinhasPlayListBean implements Serializable {
 			playlistDAO.excluir(playlist);
 			playlists = buscarMinhasPlayList();
 			buscarCifras();
-			Messages.addGlobalInfo("PlayList excluida com sucesso!");
+			Messages.addGlobalInfo("PlayList excluída com sucesso!");
 		} catch (RuntimeException erro) {
 			System.err.println("[EXCLUIR PLAYLIST]: " + erro.getMessage());
 			Messages.addGlobalError("Ocorreu um erro ao tentar excluir o local!");
@@ -96,8 +97,11 @@ public class MinhasPlayListBean implements Serializable {
 			itemPlaylistIndicadaDAO.excluir(itemPlaylistIndicada);
 			if (itemPlaylist != null) {
 				itemPlaylistDAO.excluir(itemPlaylist);
+				
 			}
+			
 			buscarCifras();
+			
 			
 			Messages.addGlobalInfo("Cifra excluída com sucesso!");
 			

@@ -19,7 +19,7 @@
 	<ui:define name="conteudo">
 
 		<h:form id="frmPlaylists">
-			<p:poll interval="10" update=":frmPlaylists :mensagem"
+			<p:poll interval="5" update=":frmPlaylists :mensagem"
 				immediate="true" listener="#{MBMinhasPlaylist.buscarIndicadas}" />
 
 			<p:panel id="painel"
